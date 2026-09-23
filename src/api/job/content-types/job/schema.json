@@ -72,6 +72,11 @@
     },
     "jobUpdatedAt": {
       "type": "datetime"
+    },
+    "job_histories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::job-history.job-history"
     }
   }
 }

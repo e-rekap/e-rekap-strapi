@@ -497,6 +497,10 @@ export interface ApiJobJob extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     deadline: Schema.Attribute.Time & Schema.Attribute.Required;
     description: Schema.Attribute.Text;
+    job_histories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::job-history.job-history'
+    >;
     jobAssignedAt: Schema.Attribute.DateTime;
     jobAssignedBy: Schema.Attribute.Integer;
     jobAssignedTo: Schema.Attribute.Integer;
@@ -577,6 +581,10 @@ export interface ApiShiftShift extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    shift_schedules: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::shift-schedule.shift-schedule'
+    >;
     startTime: Schema.Attribute.Time & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1040,7 +1048,6 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -1054,6 +1061,7 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    jobs: Schema.Attribute.Relation<'oneToMany', 'api::job.job'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1071,6 +1079,10 @@ export interface PluginUsersPermissionsUser
     role: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    shift_schedules: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::shift-schedule.shift-schedule'
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

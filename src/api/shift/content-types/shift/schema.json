@@ -22,6 +22,11 @@
     "endTime": {
       "type": "time",
       "required": true
+    },
+    "shift_schedules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shift-schedule.shift-schedule"
     }
   }
 }

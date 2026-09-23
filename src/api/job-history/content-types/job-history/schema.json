@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "job_histories",
+  "info": {
+    "singularName": "job-history",
+    "pluralName": "job-histories",
+    "displayName": "JobHistory"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "jobId": {
+      "type": "integer"
+    },
+    "actionType": {
+      "type": "enumeration",
+      "enum": [
+        "CREATED",
+        "ASSIGNED",
+        "STARTED",
+        "TAKEOVER",
+        "DONE"
+      ]
+    },
+    "indicatorColor": {
+      "type": "enumeration",
+      "enum": [
+        "BLUE",
+        "ORANGE",
+        "RED",
+        "GREEN"
+      ]
+    },
+    "userId": {
+      "type": "integer"
+    },
+    "previousUserId": {
+      "type": "integer"
+    },
+    "description": {
+      "type": "text"
+    },
+    "jobHistoryCreatedAt": {
+      "type": "datetime"
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "kind": "collectionType",
+  "collectionName": "jobs",
+  "info": {
+    "singularName": "job",
+    "pluralName": "jobs",
+    "displayName": "Job"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "jobDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "deadline": {
+      "type": "time",
+      "required": true
+    },
+    "notes": {
+      "type": "text"
+    },
+    "jobStatus": {
+      "type": "enumeration",
+      "required": true,
+      "default": "NOT_STARTED",
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "DONE"
+      ]
+    },
+    "sla": {
+      "type": "enumeration",
+      "enum": [
+        "ON_TIME",
+        "OVERDUE"
+      ]
+    },
+    "slaDuration": {
+      "type": "decimal"
+    },
+    "jobCreatedBy": {
+      "type": "integer"
+    },
+    "jobAssignedTo": {
+      "type": "integer"
+    },
+    "jobAssignedBy": {
+      "type": "integer"
+    },
+    "jobAssignedAt": {
+      "type": "datetime"
+    },
+    "jobStartedAt": {
+      "type": "datetime"
+    },
+    "jobCompletedAt": {
+      "type": "datetime"
+    },
+    "jobCreatedAt": {
+      "type": "datetime"
+    },
+    "jobUpdatedAt": {
+      "type": "datetime"
+    }
+  }
+}

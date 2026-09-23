@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shift_schedules",
+  "info": {
+    "singularName": "shift-schedule",
+    "pluralName": "shift-schedules",
+    "displayName": "ShiftSchedule"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "userId": {
+      "type": "integer"
+    },
+    "shiftId": {
+      "type": "integer"
+    },
+    "shiftDate": {
+      "type": "date"
+    },
+    "shiftScheduleCreatedAt": {
+      "type": "datetime"
+    }
+  }
+}

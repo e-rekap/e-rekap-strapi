@@ -11,8 +11,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "jobId": {
-      "type": "integer"
+    "job": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::job.job"
     },
     "actionType": {
       "type": "enumeration",
@@ -33,11 +35,15 @@
         "GREEN"
       ]
     },
-    "userId": {
-      "type": "integer"
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
-    "previousUserId": {
-      "type": "integer"
+    "previousUser": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
     "description": {
       "type": "text"

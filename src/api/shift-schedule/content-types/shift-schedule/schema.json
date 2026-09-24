@@ -11,11 +11,15 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "userId": {
-      "type": "integer"
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
-    "shiftId": {
-      "type": "integer"
+    "shift": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shift.shift"
     },
     "shiftDate": {
       "type": "date"

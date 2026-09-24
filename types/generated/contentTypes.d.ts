@@ -464,20 +464,26 @@ export interface ApiJobHistoryJobHistory extends Struct.CollectionTypeSchema {
     indicatorColor: Schema.Attribute.Enumeration<
       ['BLUE', 'ORANGE', 'RED', 'GREEN']
     >;
+    job: Schema.Attribute.Relation<'manyToOne', 'api::job.job'>;
     jobHistoryCreatedAt: Schema.Attribute.DateTime;
-    jobId: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::job-history.job-history'
     > &
       Schema.Attribute.Private;
-    previousUserId: Schema.Attribute.Integer;
+    previousUser: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    userId: Schema.Attribute.Integer;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 
@@ -495,18 +501,27 @@ export interface ApiJobJob extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    deadline: Schema.Attribute.Time & Schema.Attribute.Required;
+    deadline: Schema.Attribute.DateTime & Schema.Attribute.Required;
     description: Schema.Attribute.Text;
     job_histories: Schema.Attribute.Relation<
       'oneToMany',
       'api::job-history.job-history'
     >;
     jobAssignedAt: Schema.Attribute.DateTime;
-    jobAssignedBy: Schema.Attribute.Integer;
-    jobAssignedTo: Schema.Attribute.Integer;
+    jobAssignedBy: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    jobAssignedTo: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     jobCompletedAt: Schema.Attribute.DateTime;
     jobCreatedAt: Schema.Attribute.DateTime;
-    jobCreatedBy: Schema.Attribute.Integer;
+    jobCreatedBy: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     jobDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
     jobStartedAt: Schema.Attribute.DateTime;
     jobStatus: Schema.Attribute.Enumeration<
@@ -551,13 +566,16 @@ export interface ApiShiftScheduleShiftSchedule
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    shift: Schema.Attribute.Relation<'manyToOne', 'api::shift.shift'>;
     shiftDate: Schema.Attribute.Date;
-    shiftId: Schema.Attribute.Integer;
     shiftScheduleCreatedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    userId: Schema.Attribute.Integer;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 

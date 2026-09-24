@@ -23,7 +23,7 @@
       "required": true
     },
     "deadline": {
-      "type": "time",
+      "type": "datetime",
       "required": true
     },
     "notes": {
@@ -50,13 +50,19 @@
       "type": "decimal"
     },
     "jobCreatedBy": {
-      "type": "integer"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
     "jobAssignedTo": {
-      "type": "integer"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
     "jobAssignedBy": {
-      "type": "integer"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
     "jobAssignedAt": {
       "type": "datetime"

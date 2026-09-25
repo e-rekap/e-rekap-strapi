@@ -50,7 +50,7 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
       .findFirst({ filters: { userDateKey } });
     if (existing) {
       throw new ApplicationError(
-        `${person.name} sudah punya shift di tanggal ${date}.`,
+        `${person.username} sudah punya shift di tanggal ${date}.`,
       );
     }
 

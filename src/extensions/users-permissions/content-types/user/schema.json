@@ -66,10 +66,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "name": {
-      "type": "string",
-      "required": true
-    },
     "jobs": {
       "type": "relation",
       "relation": "oneToMany",

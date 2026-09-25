@@ -5,7 +5,7 @@
 import { factories } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
 import dayjs from "dayjs";
-import { SHIFT_TYPES, shiftWindow, ShiftType, TZ } from "../../../utils/shift";
+import { shiftWindow, TZ } from "../../../utils/shift";
 
 const { ApplicationError } = errors;
 const UID = "api::shift-schedule.shift-schedule";
@@ -13,17 +13,20 @@ const UID = "api::shift-schedule.shift-schedule";
 export default factories.createCoreService(UID, ({ strapi }) => ({
   async create(params: any) {
     const data = params.data ?? {};
-    const { date, shiftType, user } = data;
+    const { shiftDate, shift, user } = data;
 
     // 1. Field wajib
-    if (!date || !shiftType || !user) {
-      throw new ApplicationError("Date, shift type, and user are required.");
-    }
-    if (!(shiftType in SHIFT_TYPES)) {
-      throw new ApplicationError("Invalid shift type.");
+    if (!shiftDate || !shift || !user) {
+      throw new ApplicationError("Shift date, shift, and user are required.");
     }
 
-    // 2. User harus ada dan ber-role User
+    // 2. Shift harus ada
+    const shiftEntry = await strapi
+      .documents("api::shift.shift")
+      .findOne({ documentId: shift });
+    if (!shiftEntry) throw new ApplicationError("Shift not found.");
+
+    // 3. User harus ada dan ber-role User
     const person = await strapi
       .documents("plugin::users-permissions.user")
       .findOne({
@@ -37,48 +40,48 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
       );
     }
 
-    // 3. Shift belum boleh mulai
-    const { startAt } = shiftWindow(date, shiftType as ShiftType);
+    // 4. Shift belum boleh mulai
+    const { startAt } = shiftWindow(shiftDate, shiftEntry);
     if (!dayjs().isBefore(startAt)) {
       throw new ApplicationError("This shift has already started or ended.");
     }
 
-    // 4. 1 user 1 shift per tanggal
-    const userDateKey = `${user}_${date}`;
-    const existing = await strapi
-      .documents(UID)
-      .findFirst({ filters: { userDateKey } });
+    // 5. 1 user 1 shift per tanggal
+    const existing = await strapi.documents(UID).findFirst({
+      filters: {
+        user: { documentId: { $eq: user } },
+        shiftDate: { $eq: shiftDate },
+      },
+    });
     if (existing) {
       throw new ApplicationError(
-        `${person.username} already has a shift on ${date}.`,
+        `${person.username} already has a shift on ${shiftDate}.`,
       );
     }
 
-    // Lolos semua cek: isi userDateKey otomatis, lalu simpan
-    data.userDateKey = userDateKey;
     return super.create(params);
   },
 
   async findMyShifts(userDocumentId: string, days: number) {
     const today = dayjs().tz(TZ);
-    const from = today.subtract(1, "day").format("YYYY-MM-DD");
+    const from = today.subtract(1, "day").format("YYYY-MM-DD"); // kemarin, supaya Malam kemarin ikut
     const to = today.add(days, "day").format("YYYY-MM-DD");
 
-    const rows = await strapi.documents(UID).findMany({
+    const rows: any[] = await strapi.documents(UID).findMany({
       filters: {
         user: { documentId: { $eq: userDocumentId } },
-        date: { $gte: from, $lte: to },
+        shiftDate: { $gte: from, $lte: to },
       },
-      sort: "date:asc",
+      populate: ["shift"],
+      sort: "shiftDate:asc",
     });
 
     const now = dayjs();
     return rows.flatMap((row) => {
-      if (!row.date || !row.shiftType) return [];
+      if (!row.shiftDate || !row.shift) return []; // data tidak lengkap → lewati
 
-      const date = String(row.date);
-      const shiftType = row.shiftType as ShiftType;
-      const { startAt, endAt } = shiftWindow(date, shiftType);
+      const shiftDate = String(row.shiftDate);
+      const { startAt, endAt } = shiftWindow(shiftDate, row.shift);
       const phase = now.isBefore(startAt)
         ? "UPCOMING"
         : now.isBefore(endAt)
@@ -87,8 +90,8 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
 
       return [
         {
-          date,
-          shiftType,
+          shiftDate,
+          shift: row.shift.name,
           startAt: startAt.format(),
           endAt: endAt.format(),
           phase,

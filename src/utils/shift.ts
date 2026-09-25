@@ -7,18 +7,20 @@ dayjs.extend(timezone);
 
 export const TZ = "Asia/Jakarta";
 
-export const SHIFT_TYPES = {
-  PAGI: { start: "07:00", end: "15:30" },
-  SIANG: { start: "15:00", end: "23:30" },
-  MALAM: { start: "23:00", end: "07:30" },
-} as const;
+const hhmm = (time: string) => time.slice(0, 5);
 
-export type ShiftType = keyof typeof SHIFT_TYPES;
+export function shiftWindow(
+  date: string,
+  shift: { startTime?: unknown; endTime?: unknown },
+) {
+  if (!shift.startTime || !shift.endTime) {
+    throw new Error("Shift has no start or end time.");
+  }
 
-export function shiftWindow(date: string, shiftType: ShiftType) {
-  const { start, end } = SHIFT_TYPES[shiftType];
+  const start = hhmm(String(shift.startTime));
+  const end = hhmm(String(shift.endTime));
   const startAt = dayjs.tz(`${date} ${start}`, TZ);
   let endAt = dayjs.tz(`${date} ${end}`, TZ);
-  if (end <= start) endAt = endAt.add(1, "day"); // shift Malam selesai besok
+  if (end <= start) endAt = endAt.add(1, "day"); // shift melewati tengah malam (Malam)
   return { startAt, endAt };
 }

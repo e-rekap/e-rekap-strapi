@@ -559,7 +559,6 @@ export interface ApiShiftScheduleShiftSchedule
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    date: Schema.Attribute.Date & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -567,8 +566,9 @@ export interface ApiShiftScheduleShiftSchedule
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    shiftType: Schema.Attribute.Enumeration<['PAGI', 'SIANG', 'MALAM']> &
-      Schema.Attribute.Required;
+    shift: Schema.Attribute.Relation<'manyToOne', 'api::shift.shift'>;
+    shiftDate: Schema.Attribute.Date;
+    shiftScheduleCreatedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -576,7 +576,6 @@ export interface ApiShiftScheduleShiftSchedule
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    userDateKey: Schema.Attribute.String & Schema.Attribute.Unique;
   };
 }
 

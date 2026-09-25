@@ -119,7 +119,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
   return {
     NOTE_MAX_LENGTH,
 
-    /** GET /my-job: job milik user pada tanggal WIB tertentu. */
+    /** GET /my-job: job milik user pada tanggal lokal tertentu. */
     async findMine(actor: Actor, range: { start: Date; end: Date }) {
       const now = new Date();
       const rows = await jobs().findMany({

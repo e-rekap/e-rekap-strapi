@@ -6,7 +6,7 @@ import type { Core } from '@strapi/strapi';
 import { errors } from '@strapi/utils';
 import { ConflictError } from '../../../utils/errors';
 import { getTraceId } from '../../../utils/logger';
-import { isValidDate, toWibDate, wibDayRange } from '../../../utils/time';
+import { isValidDate, localDayRange, TIMEZONE, toLocalDate } from '../../../utils/time';
 import type { Actor } from '../services/job-workflow';
 
 type Service = ReturnType<typeof import('../services/job-workflow').default>;
@@ -32,12 +32,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
   return {
     async me(ctx: any) {
       const actor = actorOf(ctx);
-      const date = ctx.query.date ?? toWibDate();
+      const date = ctx.query.date ?? toLocalDate();
       if (!isValidDate(date)) {
         throw new errors.ValidationError('Parameter date harus berformat YYYY-MM-DD');
       }
-      const data = await service().findMine(actor, wibDayRange(date));
-      ctx.body = { data, meta: { date, timezone: 'Asia/Jakarta' } };
+      const data = await service().findMine(actor, localDayRange(date));
+      ctx.body = { data, meta: { date, timezone: TIMEZONE } };
     },
 
     async pending(ctx: any) {

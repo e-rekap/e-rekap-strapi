@@ -18,7 +18,6 @@ export const httpStatusOf = (error: unknown): number => {
   if (error instanceof errors.ForbiddenError) return 403;
   if (error instanceof errors.NotFoundError) return 404;
   if (error instanceof errors.PayloadTooLargeError) return 413;
-  if (error instanceof errors.RateLimitError) return 429;
   if (error instanceof errors.ApplicationError) return 400;
   const status = (error as { status?: number })?.status;
   return typeof status === 'number' ? status : 500;

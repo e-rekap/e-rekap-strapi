@@ -75,15 +75,6 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::shift-schedule.shift-schedule"
-    },
-    "job_role": {
-      "type": "enumeration",
-      "required": true,
-      "default": "staff",
-      "enum": [
-        "admin",
-        "staff"
-      ]
     }
   }
 }

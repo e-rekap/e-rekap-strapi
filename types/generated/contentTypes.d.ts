@@ -1080,9 +1080,6 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
-    job_role: Schema.Attribute.Enumeration<['admin', 'staff']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'staff'>;
     jobs: Schema.Attribute.Relation<'oneToMany', 'api::job.job'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<

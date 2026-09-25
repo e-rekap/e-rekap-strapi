@@ -61,7 +61,7 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
 
   async findMyShifts(userDocumentId: string, days: number) {
     const today = dayjs().tz(TZ);
-    const from = today.subtract(1, "day").format("YYYY-MM-DD"); // kemarin, supaya Malam kemarin ikut
+    const from = today.subtract(1, "day").format("YYYY-MM-DD");
     const to = today.add(days, "day").format("YYYY-MM-DD");
 
     const rows = await strapi.documents(UID).findMany({
@@ -74,9 +74,9 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
 
     const now = dayjs();
     return rows.flatMap((row) => {
-      if (!row.date || !row.shiftType) return []; // data tidak lengkap → lewati
+      if (!row.date || !row.shiftType) return [];
 
-      const date = String(row.date); // di sini TypeScript sudah tahu date pasti ada
+      const date = String(row.date);
       const shiftType = row.shiftType as ShiftType;
       const { startAt, endAt } = shiftWindow(date, shiftType);
       const phase = now.isBefore(startAt)

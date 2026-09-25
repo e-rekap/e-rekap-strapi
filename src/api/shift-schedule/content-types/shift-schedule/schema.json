@@ -11,21 +11,29 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "shiftType": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "PAGI",
+        "SIANG",
+        "MALAM"
+      ]
+    },
     "user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
     },
-    "shift": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::shift.shift"
+    "userDateKey": {
+      "type": "string",
+      "searchable": false,
+      "required": false,
+      "unique": true
     },
-    "shiftDate": {
-      "type": "date"
-    },
-    "shiftScheduleCreatedAt": {
-      "type": "datetime"
+    "date": {
+      "type": "date",
+      "required": true
     }
   }
 }

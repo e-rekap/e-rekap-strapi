@@ -1,23 +1,22 @@
 /**
- * Helper waktu berdasarkan timezone lokal server (env `TZ`, misal `TZ=Asia/Makassar`).
- * Semua tanggal (YYYY-MM-DD) dan jam shift dibaca sebagai waktu lokal server.
+ * Helper waktu dengan timezone tetap `Asia/Jakarta` (WIB), tidak bergantung pada TZ server.
+ * Semua tanggal (YYYY-MM-DD) dan jam shift dibaca sebagai waktu WIB.
  */
 
-/** Nama timezone lokal server, misal `Asia/Jakarta`. */
-export const TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export const TIMEZONE = 'Asia/Jakarta';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
-const parseDate = (date: string): [number, number, number] => {
-  const [y, m, d] = date.split('-').map(Number);
-  return [y, m, d];
-};
-
-/** Tanggal lokal (YYYY-MM-DD) dari sebuah waktu. */
+/** Tanggal WIB (YYYY-MM-DD) dari sebuah waktu. */
 export const toLocalDate = (at: Date = new Date()): string =>
-  `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}`;
+  dayjs(at).tz(TIMEZONE).format('YYYY-MM-DD');
 
 export const isValidDate = (value: unknown): value is string => {
   if (typeof value !== 'string' || !DATE_RE.test(value)) return false;
@@ -25,23 +24,23 @@ export const isValidDate = (value: unknown): value is string => {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 };
 
-export const addDays = (date: string, days: number): string => {
-  const [y, m, d] = parseDate(date);
-  return toLocalDate(new Date(y, m - 1, d + days));
-};
+export const addDays = (date: string, days: number): string =>
+  dayjs(date).add(days, 'day').format('YYYY-MM-DD');
 
-/** Gabungkan tanggal dan jam lokal (HH:mm atau HH:mm:ss[.SSS]) menjadi Date. */
+/** Gabungkan tanggal dan jam WIB (HH:mm atau HH:mm:ss[.SSS]) menjadi Date. */
 export const localDateTime = (date: string, time: string): Date => {
-  const [y, m, d] = parseDate(date);
-  const [h = 0, mi = 0, s = 0] = time.split('.')[0].split(':').map(Number);
-  return new Date(y, m - 1, d, h, mi, s);
+  const [h = '00', mi = '00', s = '00'] = time.split('.')[0].split(':');
+  return dayjs.tz(`${date} ${h.padStart(2, '0')}:${mi}:${s}`, TIMEZONE).toDate();
 };
 
-/** Rentang [start, end) satu hari penuh waktu lokal. */
+/** Rentang [start, end) satu hari penuh waktu WIB. */
 export const localDayRange = (date: string): { start: Date; end: Date } => ({
   start: localDateTime(date, '00:00:00'),
   end: localDateTime(addDays(date, 1), '00:00:00'),
 });
+
+/** Format Date sebagai ISO dengan offset WIB, misal `2026-09-25T08:00:00+07:00`. */
+export const formatLocal = (at: Date): string => dayjs(at).tz(TIMEZONE).format();
 
 /**
  * Rentang waktu shift. Kalau jam selesai <= jam mulai (misal shift malam 23:00-07:30),

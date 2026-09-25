@@ -9,7 +9,7 @@ export interface ActiveShift {
 }
 
 /**
- * Cari shift user yang mencakup waktu `at` (waktu lokal server).
+ * Cari shift user yang mencakup waktu `at` (WIB, Asia/Jakarta).
  * Jadwal kemarin ikut dicek karena shift malam bisa melewati tengah malam.
  */
 export const findActiveShift = async (

@@ -4,8 +4,7 @@
 
 import { factories } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
-import dayjs from "dayjs";
-import { shiftWindow, TZ } from "../../../utils/shift";
+import { addDays, formatLocal, shiftRange, toLocalDate } from "../../../utils/time";
 
 const { ApplicationError } = errors;
 const UID = "api::shift-schedule.shift-schedule";
@@ -41,8 +40,11 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
     }
 
     // 4. Shift belum boleh mulai
-    const { startAt } = shiftWindow(shiftDate, shiftEntry);
-    if (!dayjs().isBefore(startAt)) {
+    if (!shiftEntry.startTime || !shiftEntry.endTime) {
+      throw new ApplicationError("Shift has no start or end time.");
+    }
+    const { start } = shiftRange(shiftDate, String(shiftEntry.startTime), String(shiftEntry.endTime));
+    if (Date.now() >= start.getTime()) {
       throw new ApplicationError("This shift has already started or ended.");
     }
 
@@ -63,9 +65,9 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
   },
 
   async findMyShifts(userDocumentId: string, days: number) {
-    const today = dayjs().tz(TZ);
-    const from = today.subtract(1, "day").format("YYYY-MM-DD"); // kemarin, supaya Malam kemarin ikut
-    const to = today.add(days, "day").format("YYYY-MM-DD");
+    const today = toLocalDate();
+    const from = addDays(today, -1);
+    const to = addDays(today, days);
 
     const rows: any[] = await strapi.documents(UID).findMany({
       filters: {
@@ -76,15 +78,15 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
       sort: "shiftDate:asc",
     });
 
-    const now = dayjs();
+    const now = Date.now();
     return rows.flatMap((row) => {
-      if (!row.shiftDate || !row.shift) return []; // data tidak lengkap → lewati
+      if (!row.shiftDate || !row.shift?.startTime || !row.shift?.endTime) return []; // data tidak lengkap → lewati
 
       const shiftDate = String(row.shiftDate);
-      const { startAt, endAt } = shiftWindow(shiftDate, row.shift);
-      const phase = now.isBefore(startAt)
+      const { start, end } = shiftRange(shiftDate, String(row.shift.startTime), String(row.shift.endTime));
+      const phase = now < start.getTime()
         ? "UPCOMING"
-        : now.isBefore(endAt)
+        : now < end.getTime()
           ? "ONGOING"
           : "ENDED";
 
@@ -92,8 +94,8 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
         {
           shiftDate,
           shift: row.shift.name,
-          startAt: startAt.format(),
-          endAt: endAt.format(),
+          startAt: formatLocal(start),
+          endAt: formatLocal(end),
           phase,
         },
       ];

@@ -1,6 +1,6 @@
 /**
  * Policy `global::is-on-shift`
- * User login harus punya shift (shift-schedule) yang mencakup waktu sekarang (waktu lokal server).
+ * User login harus punya shift (shift-schedule) yang mencakup waktu sekarang (WIB, Asia/Jakarta).
  * Shift aktif disimpan di `ctx.state.activeShift` untuk dipakai controller.
  *
  * Config opsional: { rejectedAction: 'job.take_over_rejected' } untuk nama event log saat ditolak.

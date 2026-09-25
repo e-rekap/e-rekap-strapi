@@ -31,19 +31,19 @@ const bodySize = (ctx: any): number => {
 export default {
   async create(ctx: any) {
     if (bodySize(ctx) > MAX_BODY_BYTES) {
-      return ctx.payloadTooLarge(`Body log maksimal ${MAX_BODY_BYTES} byte`);
+      return ctx.payloadTooLarge(`Log body must be at most ${MAX_BODY_BYTES} bytes`);
     }
 
     const body = ctx.request.body;
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
-      throw new errors.ValidationError('Body harus berupa objek JSON');
+      throw new errors.ValidationError('Body must be a JSON object');
     }
 
     if (!LEVELS.includes(body.level)) {
-      throw new errors.ValidationError(`level harus salah satu dari: ${LEVELS.join(', ')}`);
+      throw new errors.ValidationError(`level must be one of: ${LEVELS.join(', ')}`);
     }
     if (typeof body.message !== 'string' || !body.message.trim()) {
-      throw new errors.ValidationError('message wajib diisi');
+      throw new errors.ValidationError('message is required');
     }
 
     const fields: Partial<Record<Field, string>> = {};
@@ -51,7 +51,7 @@ export default {
       const value = body[key];
       if (value === undefined || value === null) continue;
       if (typeof value !== 'string' || value.length > max) {
-        throw new errors.ValidationError(`${key} harus berupa teks maksimal ${max} karakter`);
+        throw new errors.ValidationError(`${key} must be a string of at most ${max} characters`);
       }
       fields[key] = value;
     }
@@ -59,7 +59,7 @@ export default {
     let userId: string | undefined;
     if (body.user_id !== undefined && body.user_id !== null) {
       if (!['string', 'number'].includes(typeof body.user_id) || String(body.user_id).length > 50) {
-        throw new errors.ValidationError('user_id tidak valid');
+        throw new errors.ValidationError('user_id is invalid');
       }
       userId = String(body.user_id);
     }

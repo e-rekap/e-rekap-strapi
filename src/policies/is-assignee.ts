@@ -16,7 +16,7 @@ export default async (policyContext: any, config: any, { strapi }: { strapi: Cor
   const traceId = getTraceId(policyContext);
 
   if (!user) {
-    throw new errors.UnauthorizedError('Silakan login terlebih dahulu');
+    throw new errors.UnauthorizedError('Please log in first');
   }
 
   const job = await strapi.db.query('api::job.job').findOne({
@@ -29,27 +29,27 @@ export default async (policyContext: any, config: any, { strapi }: { strapi: Cor
     auditLog({
       action: rejectedAction,
       level: 'warn',
-      message: `Job ${documentId} tidak ditemukan`,
+      message: `Job ${documentId} not found`,
       user,
       jobId: documentId,
       traceId,
       labels: { reason: 'not_found', http_status: 404, route: policyContext.request?.path },
     });
-    throw new errors.NotFoundError('Job tidak ditemukan');
+    throw new errors.NotFoundError('Job not found');
   }
 
   if (job.jobAssignedTo?.id !== user.id) {
     auditLog({
       action: rejectedAction,
       level: 'warn',
-      message: `${user.username} bukan assignee job ${documentId}`,
+      message: `${user.username} is not the assignee of job ${documentId}`,
       user,
       jobId: documentId,
       statusBefore: job.jobStatus,
       traceId,
       labels: { reason: 'not_assignee', http_status: 403, route: policyContext.request?.path },
     });
-    throw new errors.PolicyError('Hanya assignee yang boleh melakukan aksi ini');
+    throw new errors.PolicyError('Only the assignee can perform this action');
   }
 
   return true;

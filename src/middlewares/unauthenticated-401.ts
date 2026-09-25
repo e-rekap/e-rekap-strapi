@@ -18,7 +18,7 @@ export default (config: { paths?: string[] } = {}) => {
       !ctx.request.headers.authorization &&
       patterns.some((re) => re.test(ctx.path))
     ) {
-      ctx.unauthorized('Silakan login terlebih dahulu');
+      ctx.unauthorized('Please log in first');
     }
   };
 };

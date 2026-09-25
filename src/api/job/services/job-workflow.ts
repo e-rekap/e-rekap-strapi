@@ -51,8 +51,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
 
   const failTransition = async (documentId: string, expected: string): Promise<never> => {
     const job = await jobs().findOne({ where: { documentId }, select: ['jobStatus'] });
-    if (!job) throw new errors.NotFoundError('Job tidak ditemukan');
-    throw new ConflictError(`Status job ${job.jobStatus}, aksi ini butuh status ${expected}`, {
+    if (!job) throw new errors.NotFoundError('Job not found');
+    throw new ConflictError(`Job status is ${job.jobStatus}, this action requires status ${expected}`, {
       currentStatus: job.jobStatus,
       expectedStatus: expected,
     });
@@ -65,7 +65,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
       populate: { jobAssignedTo: { select: ['id'] } },
     });
     if (job?.jobAssignedTo?.id !== actor.id) {
-      throw new errors.ForbiddenError('Hanya assignee yang boleh melakukan aksi ini');
+      throw new errors.ForbiddenError('Only the assignee can perform this action');
     }
     return job;
   };
@@ -350,7 +350,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
             where: { documentId, jobStatus: { $ne: 'DONE' } },
             data: { jobAssignedAt: now, jobUpdatedAt: now },
           });
-          if (!count) await failTransition(documentId, 'NOT_STARTED atau IN_PROGRESS');
+          if (!count) await failTransition(documentId, 'NOT_STARTED or IN_PROGRESS');
 
           // Dibaca setelah baris terkunci, jadi assignee ini pasti yang terbaru.
           const job = await jobs().findOne({
@@ -361,12 +361,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
           const from = job.jobAssignedTo;
 
           if (!from) {
-            throw new ConflictError('Job belum punya assignee, gunakan fitur assign admin', {
+            throw new ConflictError('Job has no assignee yet, use the admin assign feature', {
               currentStatus: job.jobStatus,
             });
           }
           if (from.id === actor.id) {
-            throw new ConflictError('Job ini sudah milik Anda', { currentStatus: job.jobStatus });
+            throw new ConflictError('This job is already assigned to you', { currentStatus: job.jobStatus });
           }
 
           await strapi.documents(JOB).update({

@@ -15,7 +15,7 @@ export default async (policyContext: any, config: any, { strapi }: { strapi: Cor
   const user = policyContext.state?.user;
 
   if (!user) {
-    throw new errors.UnauthorizedError('Silakan login terlebih dahulu');
+    throw new errors.UnauthorizedError('Please log in first');
   }
 
   const activeShift = await findActiveShift(strapi, user.id);
@@ -24,13 +24,13 @@ export default async (policyContext: any, config: any, { strapi }: { strapi: Cor
     auditLog({
       action: config?.rejectedAction ?? 'shift.not_on_shift',
       level: 'warn',
-      message: `${user.username} tidak sedang on-shift`,
+      message: `${user.username} is not currently on-shift`,
       user,
       jobId: policyContext.params?.id,
       traceId: getTraceId(policyContext),
       labels: { reason: 'not_on_shift', http_status: 403, route: policyContext.request?.path },
     });
-    throw new errors.PolicyError('Aksi ini hanya untuk user yang sedang on-shift');
+    throw new errors.PolicyError('This action is only available to users who are currently on-shift');
   }
 
   policyContext.state.activeShift = activeShift;

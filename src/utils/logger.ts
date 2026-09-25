@@ -66,7 +66,7 @@ const fallback = (index: string, doc: Record<string, unknown>, reason?: unknown)
   const log = (globalThis as any).strapi?.log;
   if (reason) {
     const why = reason instanceof Error ? reason.message : String(reason);
-    log ? log.warn(`Elasticsearch log gagal (${why}) ${line}`) : console.warn(why, line);
+    log ? log.warn(`Elasticsearch log failed (${why}) ${line}`) : console.warn(why, line);
   } else {
     log ? log.info(line) : console.info(line);
   }

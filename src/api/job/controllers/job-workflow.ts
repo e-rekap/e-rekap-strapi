@@ -25,7 +25,7 @@ const respond = async (ctx: any, fn: () => Promise<unknown>) => {
 export default ({ strapi }: { strapi: Core.Strapi }) => {
   const service = () => strapi.service('api::job.job-workflow') as unknown as Service;
   const actorOf = (ctx: any): Actor => {
-    if (!ctx.state.user) throw new errors.UnauthorizedError('Silakan login terlebih dahulu');
+    if (!ctx.state.user) throw new errors.UnauthorizedError('Please log in first');
     return ctx.state.user;
   };
 
@@ -34,7 +34,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
       const actor = actorOf(ctx);
       const date = ctx.query.date ?? toLocalDate();
       if (!isValidDate(date)) {
-        throw new errors.ValidationError('Parameter date harus berformat YYYY-MM-DD');
+        throw new errors.ValidationError('The date parameter must be in YYYY-MM-DD format');
       }
       const data = await service().findMine(actor, localDayRange(date));
       ctx.body = { data, meta: { date, timezone: TIMEZONE } };
@@ -57,10 +57,10 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
       const max = service().NOTE_MAX_LENGTH;
 
       if (typeof note !== 'string' || !note.trim()) {
-        throw new errors.ValidationError('note wajib berupa teks dan tidak boleh kosong');
+        throw new errors.ValidationError('note is required and must be a non-empty string');
       }
       if (note.trim().length > max) {
-        throw new errors.ValidationError(`note maksimal ${max} karakter`);
+        throw new errors.ValidationError(`note must be at most ${max} characters`);
       }
 
       await respond(ctx, () =>

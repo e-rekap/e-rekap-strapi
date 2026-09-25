@@ -17,10 +17,10 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
 
     // 1. Field wajib
     if (!date || !shiftType || !user) {
-      throw new ApplicationError("Tanggal, shift, dan user wajib diisi.");
+      throw new ApplicationError("Date, shift type, and user are required.");
     }
     if (!(shiftType in SHIFT_TYPES)) {
-      throw new ApplicationError("Tipe shift tidak valid.");
+      throw new ApplicationError("Invalid shift type.");
     }
 
     // 2. User harus ada dan ber-role User
@@ -30,17 +30,17 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
         documentId: user,
         populate: ["role"],
       });
-    if (!person) throw new ApplicationError("User tidak ditemukan.");
+    if (!person) throw new ApplicationError("User not found.");
     if (person.role?.type !== "user") {
       throw new ApplicationError(
-        "Hanya user dengan role User yang bisa dijadwalkan.",
+        "Only users with the User role can be scheduled.",
       );
     }
 
     // 3. Shift belum boleh mulai
     const { startAt } = shiftWindow(date, shiftType as ShiftType);
     if (!dayjs().isBefore(startAt)) {
-      throw new ApplicationError("Shift ini sudah mulai atau sudah lewat.");
+      throw new ApplicationError("This shift has already started or ended.");
     }
 
     // 4. 1 user 1 shift per tanggal
@@ -50,7 +50,7 @@ export default factories.createCoreService(UID, ({ strapi }) => ({
       .findFirst({ filters: { userDateKey } });
     if (existing) {
       throw new ApplicationError(
-        `${person.username} sudah punya shift di tanggal ${date}.`,
+        `${person.username} already has a shift on ${date}.`,
       );
     }
 

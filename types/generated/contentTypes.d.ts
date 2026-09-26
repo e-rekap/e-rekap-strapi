@@ -455,7 +455,7 @@ export interface ApiJobHistoryJobHistory extends Struct.CollectionTypeSchema {
   };
   attributes: {
     actionType: Schema.Attribute.Enumeration<
-      ['CREATED', 'ASSIGNED', 'STARTED', 'TAKEOVER', 'DONE']
+      ['CREATED', 'ASSIGNED', 'EDITED', 'STARTED', 'TAKEOVER', 'DONE']
     >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

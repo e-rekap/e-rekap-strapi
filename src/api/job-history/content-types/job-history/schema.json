@@ -14,13 +14,15 @@
     "job": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::job.job"
+      "target": "api::job.job",
+      "inversedBy": "job_histories"
     },
     "actionType": {
       "type": "enumeration",
       "enum": [
         "CREATED",
         "ASSIGNED",
+        "EDITED",
         "STARTED",
         "TAKEOVER",
         "DONE"

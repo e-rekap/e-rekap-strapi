@@ -1,44 +1,26 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "lib": ["ES2020"],
-    "target": "ES2019",
+    "target": "ES2020",
+    "lib": ["DOM", "ES2020"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "strict": true,
+    "noEmit": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "noEmitOnError": true,
-    "noImplicitThis": true,
-    "outDir": "dist",
-    "rootDir": "."
+    "paths": {
+      "~/*": ["./src/*"],
+      "atoms/*": ["./src/atoms/*"],
+      "components/*": ["./src/components/*"],
+      "hocs/*": ["./src/hocs/*"],
+      "hooks/*": ["./src/hooks/*"],
+      "models/*": ["./src/models/*"],
+      "pages/*": ["./src/pages/*"],
+      "services/*": ["./src/services/*"],
+      "utils/*": ["./src/utils/*"],
+      "variables/*": ["./src/variables/*"]
+    },
+    "types": ["node"]
   },
-  "include": [
-    // Include root files
-    "./",
-    // Include all ts files
-    "./**/*.ts",
-    // Include all js files
-    "./**/*.js",
-    // Force the JSON files in the src folder to be included
-    "src/**/*.json"
-  ],
-
-  "exclude": [
-    "node_modules/",
-    "build/",
-    "dist/",
-    ".cache/",
-    ".tmp/",
-    ".strapi/",
-
-    // Do not include admin files in the server compilation
-    "src/admin/",
-    // Do not include test files
-    "**/*.test.*",
-    // Do not include plugins in the server compilation
-    "src/plugins/**"
-  ]
+  "include": ["src"]
 }

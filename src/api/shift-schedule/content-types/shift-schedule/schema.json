@@ -4,28 +4,31 @@
   "info": {
     "singularName": "shift-schedule",
     "pluralName": "shift-schedules",
-    "displayName": "ShiftSchedule"
+    "displayName": "shiftSchedule"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "user": {
+    "shiftDate": {
+      "type": "date",
+      "required": true
+    },
+    "member": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToOne",
+      "target": "api::member.member"
     },
     "shift": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToOne",
       "target": "api::shift.shift"
     },
-    "shiftDate": {
-      "type": "date"
-    },
-    "shiftScheduleCreatedAt": {
-      "type": "datetime"
+    "memberDateKey": {
+      "type": "string",
+      "unique": true,
+      "column": { "unique": true }
     }
   }
 }

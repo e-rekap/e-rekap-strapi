@@ -446,7 +446,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiJobHistoryJobHistory extends Struct.CollectionTypeSchema {
   collectionName: 'job_histories';
   info: {
-    displayName: 'JobHistory';
+    displayName: 'jobHistory';
     pluralName: 'job-histories';
     singularName: 'job-history';
   };
@@ -455,44 +455,76 @@ export interface ApiJobHistoryJobHistory extends Struct.CollectionTypeSchema {
   };
   attributes: {
     actionType: Schema.Attribute.Enumeration<
-      ['CREATED', 'ASSIGNED', 'STARTED', 'TAKEOVER', 'DONE']
-    >;
+      ['CREATED', 'ASSIGNED', 'STARTED', 'NOTE', 'TAKEOVER', 'DONE']
+    > &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
-    indicatorColor: Schema.Attribute.Enumeration<
-      ['BLUE', 'ORANGE', 'RED', 'GREEN']
-    >;
-    job: Schema.Attribute.Relation<'manyToOne', 'api::job.job'>;
-    jobHistoryCreatedAt: Schema.Attribute.DateTime;
+    desc: Schema.Attribute.Text;
+    job: Schema.Attribute.Relation<'oneToOne', 'api::job.job'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::job-history.job-history'
     > &
       Schema.Attribute.Private;
-    previousUser: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
+    previousUser: Schema.Attribute.Relation<'oneToOne', 'api::member.member'>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
+    user: Schema.Attribute.Relation<'oneToOne', 'api::member.member'>;
   };
 }
 
 export interface ApiJobJob extends Struct.CollectionTypeSchema {
   collectionName: 'jobs';
   info: {
-    displayName: 'Job';
+    displayName: 'job';
     pluralName: 'jobs';
     singularName: 'job';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    assignedAt: Schema.Attribute.DateTime;
+    assignee: Schema.Attribute.Relation<'oneToOne', 'api::member.member'>;
+    completedAt: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deadline: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    desc: Schema.Attribute.Text & Schema.Attribute.Required;
+    jobDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    jobStatus: Schema.Attribute.Enumeration<
+      ['NOT_STARTED', 'IN_PROGRESS', 'DONE']
+    > &
+      Schema.Attribute.DefaultTo<'NOT_STARTED'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::job.job'> &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    startedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiMemberMember extends Struct.CollectionTypeSchema {
+  collectionName: 'members';
+  info: {
+    displayName: 'member';
+    pluralName: 'members';
+    singularName: 'member';
   };
   options: {
     draftAndPublish: false;
@@ -501,43 +533,14 @@ export interface ApiJobJob extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    deadline: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    description: Schema.Attribute.Text;
-    job_histories: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::job-history.job-history'
-    >;
-    jobAssignedAt: Schema.Attribute.DateTime;
-    jobAssignedBy: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    jobAssignedTo: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    jobCompletedAt: Schema.Attribute.DateTime;
-    jobCreatedAt: Schema.Attribute.DateTime;
-    jobCreatedBy: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    jobDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    jobStartedAt: Schema.Attribute.DateTime;
-    jobStatus: Schema.Attribute.Enumeration<
-      ['NOT_STARTED', 'IN_PROGRESS', 'DONE']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'NOT_STARTED'>;
-    jobUpdatedAt: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::job.job'> &
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::member.member'
+    > &
       Schema.Attribute.Private;
-    notes: Schema.Attribute.Text;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    sla: Schema.Attribute.Enumeration<['ON_TIME', 'OVERDUE']>;
-    slaDuration: Schema.Attribute.Decimal;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -548,7 +551,7 @@ export interface ApiShiftScheduleShiftSchedule
   extends Struct.CollectionTypeSchema {
   collectionName: 'shift_schedules';
   info: {
-    displayName: 'ShiftSchedule';
+    displayName: 'shiftSchedule';
     pluralName: 'shift-schedules';
     singularName: 'shift-schedule';
   };
@@ -565,24 +568,21 @@ export interface ApiShiftScheduleShiftSchedule
       'api::shift-schedule.shift-schedule'
     > &
       Schema.Attribute.Private;
+    member: Schema.Attribute.Relation<'oneToOne', 'api::member.member'>;
+    memberDateKey: Schema.Attribute.String & Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
-    shift: Schema.Attribute.Relation<'manyToOne', 'api::shift.shift'>;
-    shiftDate: Schema.Attribute.Date;
-    shiftScheduleCreatedAt: Schema.Attribute.DateTime;
+    shift: Schema.Attribute.Relation<'oneToOne', 'api::shift.shift'>;
+    shiftDate: Schema.Attribute.Date & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
   };
 }
 
 export interface ApiShiftShift extends Struct.CollectionTypeSchema {
   collectionName: 'shifts';
   info: {
-    displayName: 'Shift';
+    displayName: 'shift';
     pluralName: 'shifts';
     singularName: 'shift';
   };
@@ -593,16 +593,15 @@ export interface ApiShiftShift extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    crossesMidnight: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
     endTime: Schema.Attribute.Time & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::shift.shift'> &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    shift_schedules: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::shift-schedule.shift-schedule'
-    >;
     startTime: Schema.Attribute.Time & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1066,6 +1065,7 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
+    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -1079,7 +1079,6 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
-    jobs: Schema.Attribute.Relation<'oneToMany', 'api::job.job'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1097,10 +1096,6 @@ export interface PluginUsersPermissionsUser
     role: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.role'
-    >;
-    shift_schedules: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::shift-schedule.shift-schedule'
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1127,6 +1122,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::job-history.job-history': ApiJobHistoryJobHistory;
       'api::job.job': ApiJobJob;
+      'api::member.member': ApiMemberMember;
       'api::shift-schedule.shift-schedule': ApiShiftScheduleShiftSchedule;
       'api::shift.shift': ApiShiftShift;
       'plugin::content-releases.release': PluginContentReleasesRelease;

@@ -4,52 +4,42 @@
   "info": {
     "singularName": "job-history",
     "pluralName": "job-histories",
-    "displayName": "JobHistory"
+    "displayName": "jobHistory"
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "job": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::job.job"
-    },
     "actionType": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "CREATED",
         "ASSIGNED",
         "STARTED",
+        "NOTE",
         "TAKEOVER",
         "DONE"
       ]
     },
-    "indicatorColor": {
-      "type": "enumeration",
-      "enum": [
-        "BLUE",
-        "ORANGE",
-        "RED",
-        "GREEN"
-      ]
+    "job": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::job.job"
     },
     "user": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToOne",
+      "target": "api::member.member"
     },
     "previousUser": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToOne",
+      "target": "api::member.member"
     },
-    "description": {
+    "desc": {
       "type": "text"
-    },
-    "jobHistoryCreatedAt": {
-      "type": "datetime"
     }
   }
 }

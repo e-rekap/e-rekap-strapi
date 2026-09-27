@@ -1,5 +1,5 @@
 {
-  "name": "e-rekap-strapi",
+  "name": "backend",
   "version": "0.1.0",
   "private": true,
   "description": "A Strapi application",
@@ -15,13 +15,11 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.19.2",
-    "@strapi/database": "5.54.0",
-    "@strapi/plugin-cloud": "5.54.0",
-    "@strapi/plugin-users-permissions": "5.54.0",
-    "@strapi/strapi": "5.54.0",
-    "dayjs": "^1.11.23",
-    "pg": "8.20.0",
+    "@strapi/database": "5.55.1",
+    "@strapi/plugin-cloud": "5.55.1",
+    "@strapi/plugin-users-permissions": "5.55.1",
+    "@strapi/strapi": "5.55.1",
+    "better-sqlite3": "12.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.30.3",
@@ -38,7 +36,7 @@
     "npm": ">=6.0.0"
   },
   "strapi": {
-    "uuid": "226b8f20-cd2a-4f7a-acd2-e46a961d3980",
-    "installId": "ca411d95f0bee80954e609a909f05b3891bf934a479bc86d91740577c5012fb5"
+    "uuid": "38aa9b00-5825-49bc-8e95-7bd6b7c5cebc",
+    "installId": "30798ed6e65cbde0991aef8a2f897a43a5757f71524af1ce2ea502941c1ab229"
   }
 }

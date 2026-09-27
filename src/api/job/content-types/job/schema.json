@@ -4,7 +4,7 @@
   "info": {
     "singularName": "job",
     "pluralName": "jobs",
-    "displayName": "Job"
+    "displayName": "job"
   },
   "options": {
     "draftAndPublish": false
@@ -13,13 +13,15 @@
   "attributes": {
     "title": {
       "type": "string",
+      "maxLength": 100,
       "required": true
     },
-    "description": {
-      "type": "text"
+    "desc": {
+      "type": "text",
+      "required": true
     },
     "jobDate": {
-      "type": "datetime",
+      "type": "date",
       "required": true
     },
     "deadline": {
@@ -27,11 +29,10 @@
       "required": true
     },
     "notes": {
-      "type": "text"
+      "type": "string"
     },
     "jobStatus": {
       "type": "enumeration",
-      "required": true,
       "default": "NOT_STARTED",
       "enum": [
         "NOT_STARTED",
@@ -39,50 +40,19 @@
         "DONE"
       ]
     },
-    "sla": {
-      "type": "enumeration",
-      "enum": [
-        "ON_TIME",
-        "OVERDUE"
-      ]
+    "startedAt": {
+      "type": "datetime"
     },
-    "slaDuration": {
-      "type": "decimal"
+    "completedAt": {
+      "type": "datetime"
     },
-    "jobCreatedBy": {
+    "assignee": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "oneToOne",
+      "target": "api::member.member"
     },
-    "jobAssignedTo": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
-    },
-    "jobAssignedBy": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
-    },
-    "jobAssignedAt": {
+    "assignedAt": {
       "type": "datetime"
-    },
-    "jobStartedAt": {
-      "type": "datetime"
-    },
-    "jobCompletedAt": {
-      "type": "datetime"
-    },
-    "jobCreatedAt": {
-      "type": "datetime"
-    },
-    "jobUpdatedAt": {
-      "type": "datetime"
-    },
-    "job_histories": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::job-history.job-history"
     }
   }
 }

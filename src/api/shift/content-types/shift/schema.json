@@ -4,7 +4,7 @@
   "info": {
     "singularName": "shift",
     "pluralName": "shifts",
-    "displayName": "Shift"
+    "displayName": "shift"
   },
   "options": {
     "draftAndPublish": false
@@ -23,10 +23,13 @@
       "type": "time",
       "required": true
     },
-    "shift_schedules": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::shift-schedule.shift-schedule"
+    "order": {
+      "type": "integer",
+      "required": true
+    },
+    "crossesMidnight": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

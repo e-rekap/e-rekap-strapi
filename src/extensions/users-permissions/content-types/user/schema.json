@@ -75,6 +75,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::shift-schedule.shift-schedule"
+    },
+    "audit_logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::audit-log.audit-log",
+      "mappedBy": "users"
     }
   }
 }

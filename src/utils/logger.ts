@@ -10,8 +10,6 @@ import { Client } from '@elastic/elasticsearch';
 
 export const LOG_INDEX = {
   api: 'erekap-api-logs',
-  audit: 'erekap-audit-logs',
-  fe: 'erekap-fe-logs',
 } as const;
 
 export type LogLevel = 'info' | 'warn' | 'error';
@@ -88,7 +86,29 @@ export const indexLog = (index: string, doc: Record<string, unknown>): Promise<v
 const clean = (obj: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined && v !== null));
 
-/** Event bisnis, format domain.aksi (misal `job.taken_over`) ke `erekap-audit-logs`. */
+/** Tulis log aplikasi ke console Strapi dan index API yang sama. */
+export const appLog = (level: LogLevel, message: string, context?: unknown): void => {
+  const strapiLog = (globalThis as any).strapi?.log;
+  const write = strapiLog?.[level];
+
+  if (typeof write === 'function') {
+    context === undefined ? write(message) : write(message, context);
+  }
+
+  const error = context instanceof Error ? { message: context.message, stack: context.stack } : undefined;
+  void indexLog(
+    LOG_INDEX.api,
+    clean({
+      '@timestamp': new Date().toISOString(),
+      service: { name: 'erekap-be' },
+      log: { level },
+      message,
+      error,
+    }),
+  );
+};
+
+/** Event bisnis, format domain.aksi (misal `job.taken_over`) ke `erekap-api-logs`. */
 export const auditLog = (event: AuditEvent): Promise<void> => {
   const level = event.level ?? 'info';
   const err = event.error instanceof Error ? event.error : undefined;
@@ -114,7 +134,7 @@ export const auditLog = (event: AuditEvent): Promise<void> => {
       level === 'error' && err ? { message: err.message, stack: err.stack } : undefined,
   };
 
-  return indexLog(LOG_INDEX.audit, clean(doc));
+  return indexLog(LOG_INDEX.api, clean(doc));
 };
 
 /** Ambil trace id dari middleware request-logger (kalau ada) atau header X-Request-Id. */

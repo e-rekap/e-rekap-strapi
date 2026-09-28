@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { appLog } from './utils/logger';
 
 /**
  * Permission route custom per tipe role users-permissions.
@@ -32,7 +33,7 @@ const grantPermissions = async (strapi: Core.Strapi) => {
         await strapi.db
           .query('plugin::users-permissions.permission')
           .create({ data: { action, role: role.id } });
-        strapi.log.info(`Permission ${action} diberikan ke role ${type}`);
+        appLog('info', `Permission ${action} diberikan ke role ${type}`);
       }
     }
   }

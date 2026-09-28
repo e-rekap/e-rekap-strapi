@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { appLog } from '../utils/logger';
 
 /**
  * Global middleware: mencatat setiap request POST/PUT/PATCH/DELETE
@@ -54,7 +55,7 @@ export default (config: unknown, { strapi }: { strapi: Core.Strapi }) => {
         },
       });
     } catch (error) {
-      strapi.log.error('[audit-log middleware] failed to save log:', error);
+      appLog('error', '[audit-log middleware] failed to save log:', error);
     }
   };
 };

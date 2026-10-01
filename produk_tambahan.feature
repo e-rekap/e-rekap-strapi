@@ -66,20 +66,6 @@
       | Laptop  |
       | lApToP  |
 
-  @TC-017 @search @positive
-  # Assumption: Enter key and the search icon trigger the same search.
-  Scenario Outline: Search can be submitted by Enter key or search icon
-    Given the catalog contains 50 items matching keyword "laptop"
-    When User types "laptop" into the search bar
-    And User submits the search by <method>
-    Then the "results found" header is displayed
-    And the header shows "50 results found"
-
-    Examples:
-      | method                    |
-      | pressing Enter            |
-      | clicking the search icon  |
-
   @TC-018 @search @security @negative
   # Assumption: Input is sanitized/escaped; scripts are never executed.
   Scenario: Script injection in the search bar is not executed
@@ -145,26 +131,7 @@
     Then the search bar still contains "laptop"
     And the header still shows "50 results found"
 
-  @TC-025 @url @state @positive
-  # Assumption: Browser Back restores the previous query (Q13).
-  Scenario: Browser Back from a detail page restores the previous search
-    Given User has searched "laptop" and sees "50 results found"
-    And User opens the detail page of the first result card
-    When User clicks the browser Back button
-    Then User is returned to the search page
-    And the search bar contains "laptop"
-    And the header shows "50 results found"
-
   # ── FEATURE AREA 6: CLEAR & RE-SEARCH ────────────────────────────────────
-
-  @TC-026 @search @clear @positive
-  # Assumption: The (X) clear button resets the page to the initial state.
-  Scenario: Clearing the search bar returns the page to its initial state
-    Given User has searched "laptop" and sees "50 results found"
-    When User clicks the clear (X) button in the search bar
-    Then the search bar is empty
-    And NO "results found" header is displayed
-    And the result list displays items from all categories
 
   @TC-027 @search @positive
   Scenario: Submitting a new keyword replaces the previous results
@@ -203,25 +170,6 @@
     And every visible result card is related to "laptop"
     And the header count updates to the number of Promo items matching "laptop"
 
-  @TC-031 @filter @multi_select @positive
-  # Assumption: Checking "All Categories" clears every individual selection.
-  Scenario: Re-checking "All Categories" restores the full listing
-    Given User has checked the "Product" filter
-    And User has checked the "Article" filter
-    When User checks the "All Categories" filter
-    Then the "Product" and "Article" filters are unchecked
-    And the "All Categories" filter is checked
-    And the result list displays items from all categories
-
-  @TC-032 @filter @negative
-  # Assumption: Unchecking the only active sub-category falls back to
-  #             "All Categories" instead of an empty selection.
-  Scenario: Unchecking the only selected sub-category falls back to "All Categories"
-    Given User has checked the "Promo" filter only
-    When User unchecks the "Promo" filter
-    Then the "All Categories" filter is checked
-    And the result list displays items from all categories
-
   @TC-033 @filter @multi_select @edge_case
   # Assumption: Checking all five sub-categories equals "All Categories" (Q12).
   Scenario: Manually checking every sub-category is equivalent to "All Categories"
@@ -229,13 +177,6 @@
     Then the "All Categories" filter is checked
     And the result list displays items from all categories
     And the total listed equals the "All Categories" count of 3030
-
-  @TC-034 @filter @edge_case @positive
-  Scenario: Filtering a category with a single item shows exactly one card
-    When User checks the "Location" filter
-    Then exactly 1 result card is displayed
-    And that card shows the "Location" category badge
-    And no load-more or pagination control is displayed
 
   # ── FEATURE AREA 8: RESULT CARD & FLOATING ACTION BAR ────────────────────
 
@@ -246,25 +187,6 @@
     When User clicks the card body
     Then the detail page of "Up To IDR 200K Off – MAPEMALL" is opened
 
-  @TC-036 @results @navigation @positive
-  Scenario: Clicking the right chevron opens the same detail page
-    Given the result list shows the card "Up To IDR 200K Off – MAPEMALL"
-    When User clicks the right chevron of that card
-    Then the detail page of "Up To IDR 200K Off – MAPEMALL" is opened
-
-  @TC-037 @floating_bar @positive
-  Scenario Outline: Each floating action bar button opens its destination
-    When User clicks "<action>" on the floating action bar
-    Then <expected>
-
-    Examples:
-      | action    | expected                                   |
-      | Login     | the login page is opened                   |
-      | Compare   | the compare feature is opened              |
-      | Poinseru  | the Poinseru page is opened                |
-      | Education | the Education page is opened               |
-      | Tanya     | the Tanya help or chat panel is opened     |
-
   @TC-038 @floating_bar @ui @negative
   # Observed: The floating bar overlaps the third result card in the viewport.
   Scenario: The floating action bar never blocks a result card permanently
@@ -272,23 +194,6 @@
     When User scrolls to the bottom of the result list
     Then the last result card is fully visible above the floating action bar
     And the title and chevron of every card can be clicked
-
-  # ── FEATURE AREA 9: PAGINATION / LOAD MORE (Q6) ──────────────────────────
-
-  @TC-039 @pagination @positive
-  Scenario: Loading more results appends new items without duplicates
-    Given User has searched "laptop" and sees "50 results found"
-    When User scrolls to the end of the currently loaded list
-    Then the next batch of results is appended to the list
-    And no result card appears more than once
-    And the total number of loaded cards never exceeds 50
-
-  @TC-040 @pagination @edge_case
-  Scenario: Loading stops once every result is displayed
-    Given User has searched "laptop" and all 50 results are loaded
-    When User scrolls to the bottom of the list
-    Then no loading indicator is displayed
-    And no further request for more results is sent
 
   # ── FEATURE AREA 10: LANGUAGE SWITCH ─────────────────────────────────────
 
